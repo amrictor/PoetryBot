@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Query.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t23</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.planner</a> &gt; <span class="el_source">Query.java</span></div><h1>Query.java</h1><pre class="source lang-java linenums">package com.tripco.t23.planner;
+
+import com.mysql.jdbc.Driver;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+<span class="nc" id="L10">public class Query {</span>
+    //Variables to match the search TFFI.
+    public double version;
+    public String type;
+    public String match;
+    public ArrayList&lt;Filter&gt; filters;
+    public int limit;
+    public int found;
+    public ArrayList&lt;Place&gt; places;
+
+
+    //Database configuration info
+    //Testing in Travis
+<span class="nc" id="L23">    private String isTravis = System.getenv(&quot;TRAVIS&quot;);</span>
+<span class="nc" id="L24">    private String isDevelopment = System.getenv(&quot;CS314_ENV&quot;);</span>
+    private static final String myDriver = &quot;com.mysql.jdbc.Driver&quot;;
+    private String myUrl;
+    private String user;
+    private String pass;
+
+
+    /**
+     * Sets up the right database connection
+     */
+    private void setup(){
+<span class="nc bnc" id="L35" title="All 4 branches missed.">        if(isTravis != null &amp;&amp; isTravis.equals(&quot;true&quot;)){</span>
+<span class="nc" id="L36">            myUrl = &quot;jdbc:mysql://127.0.0.1/cs314&quot;;</span>
+<span class="nc" id="L37">            user = &quot;travis&quot;;</span>
+<span class="nc" id="L38">            pass= null;</span>
+        }
+<span class="nc bnc" id="L40" title="All 4 branches missed.">        else if(isDevelopment != null &amp;&amp; isDevelopment.equals(&quot;development&quot;)){</span>
+<span class="nc" id="L41">            myUrl = &quot;jdbc:mysql://127.0.0.1:56247/cs314&quot;;</span>
+<span class="nc" id="L42">            user = &quot;cs314-db&quot;;</span>
+<span class="nc" id="L43">            pass = &quot;eiK5liet1uej&quot;;</span>
+        }
+        else{
+<span class="nc" id="L46">            myUrl = &quot;jdbc:mysql://faure.cs.colostate.edu/cs314&quot;;</span>
+<span class="nc" id="L47">            user = &quot;cs314-db&quot;;</span>
+<span class="nc" id="L48">            pass = &quot;eiK5liet1uej&quot;;</span>
+        }
+<span class="nc" id="L50">    }</span>
+    /**
+     * Sets the connection and queries the database.
+     */
+    public void find(){
+<span class="nc" id="L55">        setup();</span>
+<span class="nc" id="L56">        String queryhead = &quot;SELECT world_airports.id, world_airports.name, &quot;</span>
+                + &quot;world_airports.latitude, world_airports.longitude FROM continents &quot;
+                + &quot;INNER JOIN country ON continents.id = country.continent &quot;
+                + &quot;INNER JOIN region ON country.id = region.iso_country &quot;
+                + &quot;INNER JOIN world_airports ON region.id = world_airports.iso_region &quot;
+                + &quot;WHERE &quot;;
+<span class="nc" id="L62">        String counthead = &quot;SELECT count(*) FROM continents &quot;</span>
+                + &quot;INNER JOIN country ON continents.id = country.continent &quot;
+                + &quot;INNER JOIN region ON country.id = region.iso_country &quot;
+                + &quot;INNER JOIN world_airports ON region.id = world_airports.iso_region &quot;
+                + &quot;WHERE &quot;;
+
+<span class="nc" id="L68">        String question = &quot;(country.name LIKE '%&quot; + match + &quot;%' &quot;</span>
+                + &quot;OR region.name LIKE '%&quot; + match + &quot;%' &quot;
+                + &quot;OR world_airports.name LIKE '%&quot; + match + &quot;%' &quot;
+                + &quot;OR world_airports.municipality LIKE '%&quot; + match + &quot;%') &quot;;
+
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (!filters.isEmpty()) {</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            for(int j = 0; j &lt; filters.size(); j++) {</span>
+<span class="nc" id="L75">                question += &quot; and (&quot;;</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                for (int i = 0; i &lt; filters.get(j).values.size() - 1; i++) {</span>
+<span class="nc" id="L77">                    question += filters.get(j).name + &quot; LIKE &quot; + &quot;'%&quot;</span>
+<span class="nc" id="L78">                            + filters.get(j).values.get(i) + &quot;%' OR &quot;;</span>
+                }
+<span class="nc" id="L80">                question += filters.get(j).name + &quot; LIKE &quot; + &quot;'%&quot;</span>
+<span class="nc" id="L81">                        + filters.get(j).values.get(filters.get(j).values.size()-1) + &quot;%') &quot;;</span>
+            }
+        }
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if(limit != 0){</span>
+<span class="nc" id="L85">            question  += &quot;LIMIT &quot; + limit;</span>
+        }else {
+<span class="nc" id="L87">            question += &quot;LIMIT &quot; + 50;</span>
+        }
+
+<span class="nc" id="L90">        question += &quot;;&quot;;</span>
+        //System.out.println(queryhead + question);
+        //System.out.println(counthead + question);
+        try{
+            //Try to find the class for the driver variable
+<span class="nc" id="L95">            Class.forName(myDriver);</span>
+
+            //Try to connect to database and query
+<span class="nc" id="L98">            try(Connection conn = DriverManager.getConnection(myUrl,user,pass);</span>
+<span class="nc" id="L99">                Statement stCount = conn.createStatement();</span>
+<span class="nc" id="L100">                Statement stQuery = conn.createStatement();</span>
+
+<span class="nc" id="L102">                ResultSet rsCount = stCount.executeQuery(counthead + question);</span>
+
+<span class="nc" id="L104">                ResultSet rsQuery = stQuery.executeQuery(queryhead + question)</span>
+            ){
+<span class="nc" id="L106">                buildPlaces(rsCount,rsQuery);</span>
+            }
+
+<span class="nc" id="L109">        }catch(Exception e) {</span>
+<span class="nc" id="L110">            System.err.println(&quot;Exception: &quot; + e.getMessage());</span>
+<span class="nc" id="L111">        }</span>
+<span class="nc" id="L112">    }</span>
+
+    /**
+     *Builds the responses from mySQL into places for returning.
+     */
+    public void buildPlaces(ResultSet count, ResultSet query) {
+
+<span class="nc" id="L119">        places = new ArrayList&lt;&gt;();</span>
+        try{
+<span class="nc" id="L121">            count.next();</span>
+<span class="nc" id="L122">            found = count.getInt(&quot;count(*)&quot;);</span>
+            //System.out.println(found);
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            while(query.next()){</span>
+<span class="nc" id="L125">                String id = query.getString(&quot;world_airports.id&quot;);</span>
+<span class="nc" id="L126">                String name = query.getString(&quot;world_airports.name&quot;);</span>
+<span class="nc" id="L127">                Double latitude = query.getDouble(&quot;world_airports.latitude&quot;);</span>
+<span class="nc" id="L128">                Double longitude = query.getDouble(&quot;world_airports.longitude&quot;);</span>
+<span class="nc" id="L129">                Place place = new Place(id,name,latitude,longitude);</span>
+<span class="nc" id="L130">                places.add(place);</span>
+<span class="nc" id="L131">            }</span>
+
+<span class="nc" id="L133">        }catch(Exception e) {</span>
+<span class="nc" id="L134">            System.err.println(&quot;Exception:&quot; + e.getMessage());</span>
+<span class="nc" id="L135">        }</span>
+<span class="nc" id="L136">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

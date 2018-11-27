@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MicroServer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PoBot</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.server</a> &gt; <span class="el_source">MicroServer.java</span></div><h1>MicroServer.java</h1><pre class="source lang-java linenums">package com.tripco.t23.server;
+import com.tripco.t23.planner.Bot;
+import com.tripco.t23.planner.Write;
+import spark.Request;
+import spark.Response;
+
+import spark.Spark;
+import static spark.Spark.*;
+
+
+/** A simple micro-server for the web.  Just what we need, nothing more.
+ *
+ */
+public class MicroServer {
+
+  private int    port;
+  private String name;
+<span class="nc" id="L18">  private String path = &quot;/public/&quot;;</span>
+<span class="nc" id="L19">  public Bot b = new Bot();</span>
+
+  /** Creates a micro-server to load static files and provide REST APIs.
+   *
+   * @param port Which port to start the server on
+   * @param name Name of the server
+   */
+<span class="nc" id="L26">  MicroServer(int port, String name) {</span>
+<span class="nc" id="L27">    this.port = port;</span>
+<span class="nc" id="L28">    this.name = name;</span>
+
+<span class="nc" id="L30">    port(port);</span>
+
+    // serve the static files: index.html and bundle.js
+<span class="nc" id="L33">    Spark.staticFileLocation(this.path);</span>
+<span class="nc" id="L34">    get(&quot;/&quot;, (req, res) -&gt; {</span>
+<span class="nc" id="L35">      res.redirect(&quot;index.html&quot;);</span>
+<span class="nc" id="L36">      return null;</span>
+    });
+
+    // register all micro-services and the function that services them.
+    // start with HTTP GET
+
+<span class="nc" id="L42">    get(&quot;/echo&quot;, this::echo);</span>
+    // client is sending data, so a HTTP POST is used instead of a GET
+<span class="nc" id="L44">    get(&quot;/write&quot;, this::write); //writes a poem</span>
+
+<span class="nc" id="L46">    System.out.println(&quot;\n\nServer running on port: &quot; + this.port + &quot;\n\n&quot;);</span>
+<span class="nc" id="L47">  }</span>
+
+
+  /** A REST API that echos the client request.
+   *
+   * @param request input tffi
+   * @param response output tffi
+   * @return returns an echo
+   */
+  private String echo(Request request, Response response) {
+
+<span class="nc" id="L58">    response.type(&quot;application/json&quot;);</span>
+<span class="nc" id="L59">    response.header(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;);</span>
+
+<span class="nc" id="L61">    return HTTP.echoRequest(request);</span>
+  }
+
+  /** A REST API to support trip planning.
+   *
+   * @param request input tffi
+   * @param response output tffi
+   * @return returns trip object
+   */
+  private String write(Request request, Response response) {
+<span class="nc" id="L71">    System.out.println(&quot;HEYO&quot;);</span>
+<span class="nc" id="L72">    response.type(&quot;application/json&quot;);</span>
+<span class="nc" id="L73">    response.header(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;);</span>
+
+<span class="nc" id="L75">    return new Write(request, b).getPoem();</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

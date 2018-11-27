@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Config.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t23</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.server</a> &gt; <span class="el_source">Config.java</span></div><h1>Config.java</h1><pre class="source lang-java linenums">package com.tripco.t23.server;
+
+import com.google.gson.Gson;
+import com.tripco.t23.planner.Filter;
+import com.tripco.t23.planner.Optimization;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+
+<span class="nc" id="L13">public class Config {</span>
+
+<span class="nc" id="L15">  private String type = &quot;config&quot;;</span>
+<span class="nc" id="L16">  private short version = 4;</span>
+<span class="nc" id="L17">  private List&lt;String&gt; units = Arrays.asList(&quot;miles&quot;, &quot;nautical miles&quot;, &quot;kilometers&quot;, &quot;user defined&quot;);</span>
+  private String unitName;
+  private Double unitRadius;
+<span class="nc" id="L20">  private ArrayList&lt;Optimization&gt; optimization = new ArrayList&lt;&gt;(</span>
+<span class="nc" id="L21">          Arrays.asList(new Optimization(&quot;none&quot;,&quot;The trip is not optimized&quot;),</span>
+          new Optimization(&quot;short&quot;,&quot;Nearest neighbor&quot;),
+          new Optimization(&quot;shorter&quot;,&quot;2-opt&quot;)));
+<span class="nc" id="L24">  private List&lt;String&gt; attributes = Arrays.asList(&quot;name&quot;,&quot;id&quot;,&quot;latitude&quot;,&quot;longitude&quot;);</span>
+<span class="nc" id="L25">  private ArrayList&lt;Filter&gt; filters = new ArrayList&lt;&gt;(</span>
+<span class="nc" id="L26">          Arrays.asList(new Filter(&quot;type&quot;, new ArrayList&lt;&gt;(</span>
+<span class="nc" id="L27">          Arrays.asList(&quot;balloonport&quot;, &quot;heliport&quot;, &quot;airport&quot;, &quot;seaplane base&quot;)))));</span>
+<span class="nc" id="L28">  private List&lt;String&gt; maps = Arrays.asList(&quot;svg&quot;, &quot;kml&quot;);</span>
+  private Integer port;
+
+
+  static String getConfig() {
+<span class="nc" id="L33">    Config conf = new Config();</span>
+<span class="nc" id="L34">    Gson gson = new Gson();</span>
+
+<span class="nc" id="L36">    return gson.toJson(conf);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

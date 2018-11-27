@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Write.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PoBot</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.planner</a> &gt; <span class="el_source">Write.java</span></div><h1>Write.java</h1><pre class="source lang-java linenums">package com.tripco.t23.planner;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.tripco.t23.server.HTTP;
+import spark.Request;
+
+import java.util.Random;
+
+public class Write {
+    private Poem poem;
+
+    /** Handles poem generation request, creating a new poem object from the poem request.
+     * Does the conversion from Json to a Java class before planning the trip.
+     * @param request
+     */
+<span class="nc" id="L18">    public Write (Request request, Bot b) {</span>
+        // first print the request
+<span class="nc" id="L20">        System.out.println(HTTP.echoRequest(request));</span>
+
+        // extract the information from the body of the request.
+<span class="nc" id="L23">        JsonParser jsonParser = new JsonParser();</span>
+<span class="nc" id="L24">        JsonElement requestBody = jsonParser.parse(request.body());</span>
+
+        // convert the body of the request to a Java class.
+<span class="nc" id="L27">        Gson gson = new Gson();</span>
+<span class="nc" id="L28">        poem = new Poem();</span>
+
+
+        try {
+            // plan the trip.
+<span class="nc" id="L33">            Random r = new Random();</span>
+<span class="nc" id="L34">            poem.text = new String[r.nextInt(30)+5];</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">            for(int i = 0; i&lt;poem.text.length; i++) {</span>
+<span class="nc" id="L36">                poem.text[i] = b.nextMessage(r.nextInt(400)+50);</span>
+<span class="nc" id="L37">                System.out.println(poem.text[i]);</span>
+            }
+<span class="nc" id="L39">            poem.title = poem.text[0].substring(0, poem.text[0].indexOf(' '));</span>
+<span class="nc" id="L40">            poem.author = &quot;Po Bot&quot;;</span>
+<span class="nc" id="L41">            poem.year = &quot;2018&quot;;</span>
+<span class="nc" id="L42">            poem.classification = &quot;generated&quot;;</span>
+            // log something.
+<span class="nc" id="L44">            System.out.println(poem.title);</span>
+<span class="nc" id="L45">        } catch(Exception e) {</span>
+<span class="nc" id="L46">            System.out.println(&quot;Plan failure!&quot;);</span>
+<span class="nc" id="L47">            e.printStackTrace();</span>
+<span class="nc" id="L48">            poem = null;</span>
+<span class="nc" id="L49">        }</span>
+
+
+<span class="nc" id="L52">    }</span>
+
+    /** Handles the response for a Poem object.
+     * Does the conversion from a Java class to a Json string.*
+     */
+    public String getPoem () {
+<span class="nc" id="L58">        Gson gson = new Gson();</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        return (poem==null) ? &quot;{}&quot; : gson.toJson(poem);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

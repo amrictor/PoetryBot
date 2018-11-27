@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LegDistances.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t23</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.planner</a> &gt; <span class="el_source">LegDistances.java</span></div><h1>LegDistances.java</h1><pre class="source lang-java linenums">package com.tripco.t23.planner;
+
+import java.util.ArrayList;
+
+public class LegDistances {
+
+    // create two private variables for Distance and Trip
+<span class="pc" id="L8">    private Distance distanceClass = new Distance();</span>
+    Place p1;
+    Place p2;
+    String measure;
+    double rad;
+
+    // create constructor for LegDistances
+<span class="fc" id="L15">    LegDistances(Place place1, Place place2, String units){ // default unit options</span>
+        // get places from trip class to calc distance
+
+<span class="fc" id="L18">        p1 = place1;</span>
+<span class="fc" id="L19">        p2 = place2;</span>
+<span class="fc" id="L20">        measure = units;</span>
+<span class="fc" id="L21">        rad = 0.0;</span>
+<span class="fc" id="L22">    }</span>
+
+    // for when users want to give their own units
+<span class="nc" id="L25">    LegDistances(Place place1, Place place2, String units, double radius){</span>
+<span class="nc" id="L26">        p1 = place1;</span>
+<span class="nc" id="L27">        p2 = place2;</span>
+<span class="nc" id="L28">        measure = units;</span>
+<span class="nc" id="L29">        rad = radius;</span>
+<span class="nc" id="L30">    }</span>
+
+    int distanceBetween(){
+<span class="fc" id="L33">        int dist = -1; // make sure that we are properly calculating distance</span>
+
+        // pass the places and units from Trip to Distance
+<span class="fc" id="L36">        distanceClass.setOrigin(p1);</span>
+<span class="fc" id="L37">        distanceClass.setDestination(p2);</span>
+<span class="fc" id="L38">        distanceClass.setUnits(measure);</span>
+<span class="fc" id="L39">        distanceClass.setUnitRadius(rad);</span>
+
+<span class="fc" id="L41">        distanceClass.calculate();</span>
+
+<span class="fc" id="L43">        dist = distanceClass.getDistance();</span>
+
+<span class="fc" id="L45">        return dist;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

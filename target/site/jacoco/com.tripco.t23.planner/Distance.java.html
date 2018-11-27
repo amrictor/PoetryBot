@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Distance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t23</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.planner</a> &gt; <span class="el_source">Distance.java</span></div><h1>Distance.java</h1><pre class="source lang-java linenums">package com.tripco.t23.planner;
+
+import com.google.gson.Gson;
+import java.lang.Math;
+
+public class Distance {
+    //TFFI variables
+    //Initialized to distance
+    private String type;
+    private int version;
+
+    private Place origin;
+    private Place destination;
+    private String units;
+    private String unitName;
+    private Double unitRadius;
+
+    //Result variable.
+    private int distance;
+
+    //Constructors
+<span class="fc" id="L22">    Distance(Place p1, Place p2, String unit,Double radius){</span>
+<span class="fc" id="L23">        setOrigin(p1);</span>
+<span class="fc" id="L24">        setDestination(p2);</span>
+<span class="fc" id="L25">        setUnits(unit);</span>
+<span class="fc" id="L26">        setUnitRadius(radius);</span>
+<span class="fc" id="L27">    }</span>
+
+<span class="fc" id="L29">    Distance(Place p1, Place p2, String unit){</span>
+<span class="fc" id="L30">        setOrigin(p1);</span>
+<span class="fc" id="L31">        setDestination(p2);</span>
+<span class="fc" id="L32">        setUnits(unit);</span>
+<span class="fc" id="L33">    }</span>
+
+    //Getters.
+    public Place getOrigin() {
+<span class="nc" id="L37">        return origin;</span>
+    }
+
+    public Place getDestination(){
+<span class="nc" id="L41">        return destination;</span>
+    }
+
+    public String getUnits(){
+<span class="nc" id="L45">        return units;</span>
+    }
+
+    public String getUnitName(){
+<span class="nc" id="L49">        return unitName;</span>
+    }
+
+    public double getUnitRadius() {
+<span class="nc" id="L53">        return unitRadius;</span>
+    }
+
+    public int getDistance() {
+<span class="fc" id="L57">        return distance;</span>
+    }
+
+    public int getVersion() {
+<span class="nc" id="L61">        return version;</span>
+    }
+
+    public String getType() {
+<span class="nc" id="L65">        return type;</span>
+    }
+
+    //Setters.
+    public void setDestination(Place destination) {
+<span class="fc" id="L70">        this.destination = destination;</span>
+<span class="fc" id="L71">    }</span>
+
+    public void setOrigin(Place origin) {
+<span class="fc" id="L74">        this.origin = origin;</span>
+<span class="fc" id="L75">    }</span>
+
+    public void setUnitName(String unitName) {
+<span class="nc" id="L78">        this.unitName = unitName;</span>
+<span class="nc" id="L79">    }</span>
+
+    public void setUnitRadius(double unitRadius) {
+<span class="fc" id="L82">        this.unitRadius = unitRadius;</span>
+<span class="fc" id="L83">    }</span>
+
+    public void setUnits(String units) {
+<span class="fc" id="L86">        this.units = units;</span>
+<span class="fc" id="L87">    }</span>
+
+    //Function for the actual calculation
+    public void calculate(){
+        //Angles converted to radians
+<span class="fc" id="L92">        double lat1 = Math.toRadians(origin.latitude);</span>
+<span class="fc" id="L93">        double log1 = Math.toRadians(origin.longitude);</span>
+<span class="fc" id="L94">        double lat2 = Math.toRadians(destination.latitude);</span>
+<span class="fc" id="L95">        double log2 = Math.toRadians(destination.longitude);</span>
+        //double difLat = Math.abs(lat1 - lat2);
+<span class="fc" id="L97">        double difLog = Math.abs(log1 - log2);</span>
+
+        //Equation attempt
+<span class="fc" id="L100">        double numerator1 = Math.pow(Math.cos(lat2) * Math.sin(difLog), 2);</span>
+<span class="fc" id="L101">        double numerator2 = Math.pow(Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)</span>
+<span class="fc" id="L102">                * Math.cos(lat2) * Math.cos(difLog),2);</span>
+<span class="fc" id="L103">        double denominator = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1)</span>
+<span class="fc" id="L104">                * Math.cos(lat2) * Math.cos(difLog);</span>
+<span class="fc" id="L105">        double temp = Math.atan2(Math.sqrt(numerator1 + numerator2),denominator);</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if (units.equals(&quot;miles&quot;)){</span>
+<span class="fc" id="L107">            distance = (int) Math.round(temp * 3959);</span>
+        }
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        else if(units.equals(&quot;kilometers&quot;)) </span>
+        {
+<span class="fc" id="L111">            distance = (int) Math.round(temp * 6371);</span>
+        }
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        else if(units.equals(&quot;nautical miles&quot;))</span>
+        {
+<span class="fc" id="L115">            distance = (int) Math.round(temp * 3440);</span>
+        }
+        else // User defined
+        {
+<span class="fc" id="L119">            distance = (int) Math.round(temp * unitRadius);</span>
+        }
+<span class="fc" id="L121">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

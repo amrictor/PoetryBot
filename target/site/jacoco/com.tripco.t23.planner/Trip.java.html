@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Trip.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t23</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.planner</a> &gt; <span class="el_source">Trip.java</span></div><h1>Trip.java</h1><pre class="source lang-java linenums">package com.tripco.t23.planner;
+
+import java.io.*;
+import java.io.BufferedReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+
+
+/**
+ * The Trip class supports TFFI so it can easily be converted to/from Json by Gson.
+ *
+ */
+<span class="fc" id="L13">public class Trip {</span>
+    // The variables in this class should reflect TFFI.
+    public Short version;
+    public String type;
+    public String title;
+    public Option options;
+    public ArrayList&lt;Place&gt; places;
+    public ArrayList&lt;Integer&gt; distances;
+    public String map;
+
+    /** The top level method that does planning.
+     * Adds the map and distances for the places and optimizes trip as indicated by user.
+     */
+    public void plan() {
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if(options.optimization != null){</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">            if(options.optimization.equals(&quot;short&quot;)){</span>
+<span class="fc" id="L29">                shortDistances(0);</span>
+            }
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            if(options.optimization.equals(&quot;shorter&quot;)){</span>
+<span class="nc" id="L32">                shortDistances(2);</span>
+            }
+        }
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if(options.map != null){</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            if(options.map.equals(&quot;kml&quot;)){</span>
+<span class="fc" id="L37">                this.map = kml();</span>
+            }
+            else{
+<span class="fc" id="L40">                this.map = svg();</span>
+            }
+        }
+        else{
+<span class="nc" id="L44">            this.map = svg();</span>
+        }
+<span class="fc" id="L46">        noneDistances();</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Returns a StringBuilder containing the contents of a passed in file.
+     * @return StringBuilder that contains file contents
+     */
+    private StringBuilder readFile(String filename) {
+        String line;
+<span class="fc" id="L55">        StringBuilder strBuild = new StringBuilder();</span>
+        try {
+<span class="fc" id="L57">            BufferedReader bufferedReader = new BufferedReader(</span>
+<span class="fc" id="L58">                    new InputStreamReader(getClass().getClassLoader().getResourceAsStream(filename),</span>
+<span class="fc" id="L59">                            Charset.defaultCharset()));</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            while ((line = bufferedReader.readLine()) != null) {</span>
+<span class="fc" id="L61">                strBuild.append(line).append('\n');</span>
+            }
+<span class="nc" id="L63">        } catch (Exception e) {</span>
+<span class="nc" id="L64">            System.out.println(e.getStackTrace());</span>
+<span class="fc" id="L65">        }</span>
+<span class="fc" id="L66">        return strBuild;</span>
+    }
+
+    /**
+     * Returns a KML containing the legs of the trip.
+     * @return String that contains KML
+     */
+    private String kml() {
+<span class="fc" id="L74">        StringBuilder strBuild = readFile(&quot;mapbase.kml&quot;);</span>
+
+<span class="fc" id="L76">        String name = &quot;&lt;name&gt;&quot; + title + &quot;&lt;/name&gt;&quot;;</span>
+<span class="fc" id="L77">        StringBuilder locations = new StringBuilder(name);</span>
+
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        for(Place p: places){</span>
+<span class="fc" id="L80">            String coordinates = &quot;\t\t\t\t&quot; + p.longitude + &quot;,&quot; + p.latitude +&quot;,0\n&quot;;</span>
+<span class="fc" id="L81">            locations.append(placemarkBlock(p.name, &quot;Point&quot;, coordinates));</span>
+<span class="fc" id="L82">        }</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        for(int i = 0 ; i&lt;places.size(); i++){</span>
+<span class="fc" id="L84">            String coordinates =</span>
+<span class="fc" id="L85">                    &quot;\t\t\t\t&quot; + places.get(i).longitude + &quot;,&quot; + places.get(i).latitude + &quot;,0\n&quot; </span>
+<span class="fc" id="L86">                    + &quot;\t\t\t\t&quot; + places.get(((i+1)%places.size())).longitude + &quot;,&quot; </span>
+<span class="fc" id="L87">                    + places.get((i+1)%places.size()).latitude + &quot;,0\n&quot;;</span>
+<span class="fc" id="L88">            String lineName = places.get(i).name + &quot; to &quot; + places.get((i+1)%places.size()).name;</span>
+<span class="fc" id="L89">            locations.append(placemarkBlock(lineName, &quot;LineString&quot;, coordinates));</span>
+        }
+<span class="fc" id="L91">        strBuild.insert(strBuild.indexOf(&quot;&lt;Document&gt;&quot;)+10, &quot;\n\t&quot;+name);</span>
+<span class="fc" id="L92">        return strBuild.insert(strBuild.indexOf(&quot;&lt;Folder&gt;&quot;)+8, locations).toString();</span>
+    }
+
+    /**
+     * Returns a KML placemark component.
+     * @return String that contains placemark component
+     */
+    private String placemarkBlock(String name, String type, String coordinates){
+<span class="fc" id="L100">        return &quot;\t&lt;Placemark&gt;\n&quot;</span>
+                + &quot;\t\t&lt;name&gt;&quot;
+                + name
+                + &quot;&lt;/name&gt;\n&quot;
+
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                + (type.equals(&quot;Point&quot;)</span>
+                ? &quot;\t\t&lt;styleUrl&gt;#icon-1899-0288D1-nodesc&lt;/styleUrl&gt;\n&quot;
+                : &quot;\t\t&lt;styleUrl&gt;#line-000000-1200-nodesc&lt;/styleUrl&gt;\n&quot;)
+
+                + &quot;\t\t&lt;&quot; + type + &quot;&gt;\n&quot;
+
+<span class="fc bfc" id="L111" title="All 2 branches covered.">                + (type.equals(&quot;LineString&quot;)</span>
+                ? &quot;\t\t\t&lt;tessellate&gt;1&lt;/tessellate&gt;\n&quot;
+                : &quot;&quot;)
+
+                + &quot;\t\t\t&lt;coordinates&gt;\n&quot; + coordinates +&quot;\t\t\t&lt;/coordinates&gt;\n&quot;
+                + &quot;\t\t&lt;/&quot; + type + &quot;&gt;\n&quot;
+                + &quot;\t&lt;/Placemark&gt;\n&quot;;
+
+    }
+
+    /**
+     * Returns an SVG containing the background and the legs of the trip.
+     * @return String that contains SVG
+     */
+    private String svg() {
+<span class="fc" id="L126">        StringBuilder path = new StringBuilder();</span>
+
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        for(int i = 0; i&lt;=places.size(); i++){</span>
+<span class="fc" id="L129">            Place first = places.get(((i-1) % places.size() + places.size()) % places.size());</span>
+<span class="fc" id="L130">            Place second = places.get(i % places.size());</span>
+
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            if((first.longitude-second.longitude)&gt;180.0) { //wrap around at right side</span>
+<span class="fc" id="L133">                path.append(&quot;\n\n\t\t\t&quot;)</span>
+<span class="fc" id="L134">                        .append(line(first, second, -1))</span>
+<span class="fc" id="L135">                        .append(&quot;\n\n\t\t\t&quot;)</span>
+<span class="fc" id="L136">                        .append(line(first, second, 1));</span>
+            }
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">            else if((first.longitude-second.longitude)&lt;-180.0) { //wrap around at left side</span>
+<span class="nc" id="L139">                path.append(&quot;\n\n\t\t\t&quot;)</span>
+<span class="nc" id="L140">                        .append(line(second, first, -1))</span>
+<span class="nc" id="L141">                        .append(&quot;\n\n\t\t\t&quot;)</span>
+<span class="nc" id="L142">                        .append(line(second, first, 1));</span>
+            }
+            else {
+<span class="fc" id="L145">                path.append(&quot;\n\n\t\t\t&quot;)</span>
+<span class="fc" id="L146">                        .append(line(first, second, 0)); //no wrap</span>
+            }
+
+<span class="fc" id="L149">            path.append(point(first));</span>
+        }
+
+<span class="fc" id="L152">        StringBuilder strBuild = readFile(&quot;worldmap.svg&quot;);</span>
+        
+<span class="fc" id="L154">        return strBuild.insert(strBuild.lastIndexOf(&quot;/&gt;&quot;)+2,</span>
+<span class="fc" id="L155">                path.toString() + &quot;\n&quot;).toString();</span>
+    }
+
+    /**
+     * Returns an SVG line component.
+     * @return String that contains line component
+     */
+    private String line(Place placeA, Place placeB, int wrap) {
+<span class="fc" id="L163">        double longA = placeA.longitude;</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        longA += (wrap &lt; 0) ? -360.0 : 0;</span>
+<span class="fc" id="L165">        double longB = placeB.longitude;</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        longB += (wrap &gt; 0) ? 360.0 : 0;</span>
+
+<span class="fc" id="L168">        return &quot;&lt;line x1=\&quot;&quot; + getX(longA) + &quot;\&quot; y1=\&quot;&quot; + getY(placeA.latitude)</span>
+<span class="fc" id="L169">                + &quot;\&quot; x2=\&quot;&quot; + getX(longB) + &quot;\&quot; y2=\&quot;&quot; + getY(placeB.latitude)</span>
+                + &quot;\&quot; stroke=\&quot;red\&quot; stroke-width=\&quot;3\&quot;/&gt;&quot;;
+    }
+
+    /**
+     * Returns an SVG circle component.
+     * @return String that contains circle component
+     */
+    private String point(Place place) {
+<span class="fc" id="L178">        return &quot;\n\n\t\t\t&lt;circle cx=\&quot;&quot;</span>
+<span class="fc" id="L179">                + getX(place.longitude)</span>
+                + &quot;\&quot; cy=\&quot;&quot;
+<span class="fc" id="L181">                + getY(place.latitude)</span>
+                + &quot;\&quot; r=\&quot;6\&quot; stroke=\&quot;black\&quot; stroke-width=\&quot;3\&quot; fill=\&quot;red\&quot; /&gt;&quot;;
+    }
+
+    /**
+     * Returns the pixel conversion from location longitude.
+     * @return double X coordinate
+     */
+    private double getX(double longitude){
+<span class="fc" id="L190">        return 800 * (longitude+180.0) / 360.0;</span>
+    }
+
+    /**
+     * Returns the pixel conversion from location latitude.
+     * @return double Y coordinate
+     */
+    private double getY(double latitude){
+<span class="fc" id="L198">        return 400 * (180.0-(latitude + 90.0)) / 180.0;</span>
+    }
+
+    /**
+     * Returns the distances between consecutive places,
+     * including the return to the starting point to make a round trip.
+     */
+    private void noneDistances() {
+
+<span class="fc" id="L207">        ArrayList&lt;Integer&gt; distances = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        for (int i = 0; i &lt; places.size(); i++){</span>
+<span class="fc" id="L210">            int distCalc = -1; // set default val so we know when no work</span>
+            Place p1; // start place
+            Place p2; // end place
+<span class="fc bfc" id="L213" title="All 2 branches covered.">            if (i == places.size() - 1){ // last new place so wrap around and go back to origin</span>
+<span class="fc" id="L214">                p1 = places.get(i);</span>
+<span class="fc" id="L215">                p2 = places.get(0); // where we started originally</span>
+
+            }
+            else { // not the last place we visit
+<span class="fc" id="L219">                p1 = places.get(i); // start place</span>
+<span class="fc" id="L220">                p2 = places.get(i+1); // end place</span>
+            }
+
+
+            Distance dist; //
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            if (options.units.equals(&quot;user defined&quot;)){</span>
+                // pass info to Distance.java
+<span class="nc" id="L227">                dist = new Distance(p1, p2, options.units, options.unitRadius);</span>
+            } else { // miles, km or nautical miles
+<span class="fc" id="L229">                dist = new Distance(p1, p2, options.units);</span>
+            }
+
+<span class="fc" id="L232">            dist.calculate(); //Calculates distance</span>
+<span class="fc" id="L233">            distCalc = dist.getDistance(); // Retrieves calculated distance from Distance</span>
+
+<span class="fc" id="L235">            distances.add(distCalc); // add to arraylist of distances</span>
+        }
+<span class="fc" id="L237">        this.distances = distances;</span>
+<span class="fc" id="L238">    }</span>
+
+    private void shortDistances(int opt){
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if(options.units.equals(&quot;user defined&quot;)){</span>
+<span class="nc" id="L242">            TripOpt temp = new TripOpt(places, options.units,options.unitRadius, opt);</span>
+<span class="nc" id="L243">            temp.shortOptimization();</span>
+<span class="nc" id="L244">            this.places = temp.getPlaces();</span>
+<span class="nc" id="L245">        }</span>
+        else{
+<span class="fc" id="L247">            TripOpt temp = new TripOpt(places, options.units, opt);</span>
+<span class="fc" id="L248">            temp.shortOptimization();</span>
+<span class="fc" id="L249">            this.places = temp.getPlaces();</span>
+        }
+<span class="fc" id="L251">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

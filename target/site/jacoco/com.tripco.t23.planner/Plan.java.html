@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Plan.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">t23</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.planner</a> &gt; <span class="el_source">Plan.java</span></div><h1>Plan.java</h1><pre class="source lang-java linenums">package com.tripco.t23.planner;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.tripco.t23.server.HTTP;
+import spark.Request;
+
+import java.util.ArrayList;
+
+/**
+ * This class handles to the conversions of the trip request/resopnse,
+ * converting from the Json string in the request body to a Trip object,
+ * planning the Trip, and
+ * converting the resulting Trip object back to a Json string
+ * so it may returned as the response.
+ */
+public class Plan {
+
+  private Trip trip;
+
+  /** Handles trip planning request, creating a new trip object from the trip request.
+   * Does the conversion from Json to a Java class before planning the trip.
+   * @param request
+   */
+<span class="nc" id="L26">  public Plan (Request request) {</span>
+    // first print the request
+<span class="nc" id="L28">    System.out.println(HTTP.echoRequest(request));</span>
+
+    // extract the information from the body of the request.
+<span class="nc" id="L31">    JsonParser jsonParser = new JsonParser();</span>
+<span class="nc" id="L32">    JsonElement requestBody = jsonParser.parse(request.body());</span>
+
+    // convert the body of the request to a Java class.
+<span class="nc" id="L35">    Gson gson = new Gson();</span>
+<span class="nc" id="L36">    trip = gson.fromJson(requestBody, Trip.class);</span>
+
+
+    try {
+      // plan the trip.
+<span class="nc" id="L41">      trip.plan();</span>
+      // log something.
+<span class="nc" id="L43">      System.out.println(trip.title);</span>
+<span class="nc" id="L44">    } catch(Exception e) {</span>
+<span class="nc" id="L45">      System.out.println(&quot;Plan failure!&quot;);</span>
+<span class="nc" id="L46">      e.printStackTrace();</span>
+<span class="nc" id="L47">      trip = null;</span>
+<span class="nc" id="L48">    }</span>
+
+
+<span class="nc" id="L51">  }</span>
+
+  /** Handles the response for a Trip object.
+   * Does the conversion from a Java class to a Json string.*
+   */
+  public String getTrip () {
+<span class="nc" id="L57">    Gson gson = new Gson();</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    return (trip==null) ? &quot;{}&quot; : gson.toJson(trip);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

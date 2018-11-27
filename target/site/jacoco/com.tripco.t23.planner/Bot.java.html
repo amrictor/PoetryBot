@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Bot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PoBot</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.planner</a> &gt; <span class="el_source">Bot.java</span></div><h1>Bot.java</h1><pre class="source lang-java linenums">package com.tripco.t23.planner;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+
+public class Bot {
+<span class="nc" id="L17">	private static Library lib = new Library();</span>
+<span class="nc" id="L18">	private static ArrayList&lt;String[]&gt; lineStarters = new ArrayList&lt;String[]&gt;();</span>
+	private static Map&lt;String[], ArrayList&lt;String&gt;&gt; wordMap;
+<span class="nc" id="L20">	public static int complete = 0;</span>
+<span class="nc" id="L21">	public Bot(){</span>
+<span class="nc" id="L22">		generateMap();</span>
+<span class="nc" id="L23">	}</span>
+
+	public void write() {
+
+
+<span class="nc" id="L28">	}</span>
+	
+	public static void generateMap(){
+		
+//		Thread[] threads = new Thread[4];
+//		for(int i = 0; i&lt;threads.length; i++) {
+//			threads[i] = new MapThread(wordMap, lib.poems.subList(i*(lib.poems.size()/4), (i+1)*(lib.poems.size()/4));
+//		}
+//		int numThreads = 9;
+<span class="nc" id="L37">		wordMap = new ConcurrentHashMap&lt;String[], ArrayList&lt;String&gt;&gt;();</span>
+//		
+//		ExecutorService exServer = Executors.newFixedThreadPool(numThreads);
+//		 
+//		for (; j &lt; numThreads-1; j++) {
+//			System.out.println(j*(lib.poems.size()/numThreads));
+//			System.out.println(((j+1)*((lib.poems.size()-1)/numThreads)));
+//			System.out.println(lib.poems.size());
+//			exServer.execute(new Runnable() {
+//				
+//				@SuppressWarnings(&quot;unused&quot;)
+//				@Override
+//				public void run() {
+//					for(int i = j*(lib.poems.size()/numThreads); i&lt;((j+1)*((lib.poems.size()-1)/numThreads)); i++){
+
+<span class="nc bnc" id="L52" title="All 2 branches missed.">					for(int i = 0; i&lt;lib.poems.size(); i++){</span>
+<span class="nc" id="L53">						System.out.printf(&quot;%.3f\n&quot;, 100*((double)complete/lib.poems.size()));</span>
+<span class="nc" id="L54">						String line = lib.poems.get(i);</span>
+<span class="nc" id="L55">						String[] words = line.replaceAll(&quot;\&quot;&quot;, &quot;&quot;).replaceAll(&quot;�&quot;, &quot;&quot;).replaceAll(&quot;�&quot;, &quot;&quot;).split(&quot;[\&quot;*]*[ ]+\&quot;*&quot;); //[,:;\&quot;]* +[\&quot;,;: ]*</span>
+<span class="nc" id="L56">						boolean endOfSentence = true;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">						for(int j = 0; j &lt; words.length-2; j++){</span>
+<span class="nc" id="L58">							String[] key = {words[j], words[j+1]};</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">							if(endOfSentence){</span>
+<span class="nc" id="L60">								lineStarters.add(key);</span>
+<span class="nc" id="L61">								endOfSentence = false;</span>
+							}
+							//check if at end of sentence 
+<span class="nc bnc" id="L64" title="All 2 branches missed.">							if(words[j].isEmpty());</span>
+<span class="nc bnc" id="L65" title="All 6 branches missed.">							else if(words[j].charAt(words[j].length()-1)=='?'||words[j].charAt(words[j].length()-1)=='.'||words[j].charAt(words[j].length()-1)=='!'){</span>
+<span class="nc" id="L66">								endOfSentence = true;</span>
+<span class="nc" id="L67">								words[j]=words[j].substring(0, words[j].length()-1);</span>
+							}
+							//add words to map
+							ArrayList&lt;String&gt; temp;
+<span class="nc bnc" id="L71" title="All 2 branches missed.">							if(containsKey(key)) {</span>
+<span class="nc" id="L72">								temp = getKey(key);</span>
+							}
+<span class="nc" id="L74">							else temp = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L75">							temp.add(words[j+2]); //problem</span>
+<span class="nc" id="L76">							wordMap.put(key, temp);</span>
+						}
+<span class="nc" id="L78">						complete++;</span>
+					}
+//				}
+//			});
+//		}
+//		try {
+//			exServer.awaitTermination(20, TimeUnit.SECONDS);
+//		} catch (InterruptedException e2) {
+//			// TODO Auto-generated catch block
+//			e2.printStackTrace();
+//		}
+//		for(int i = 0; i&lt;lib.poems.size(); i++){
+//			System.out.println((double)i/lib.poems.size());
+//			String line = lib.poems.get(i);
+//			String[] words = line.replaceAll(&quot;\&quot;&quot;, &quot;&quot;).split(&quot;[\&quot;*]*[ �]+\&quot;*&quot;); //[,:;\&quot;]* +[\&quot;,;: ]*
+//			boolean endOfSentence = true;
+//			for(int j = 0; j&lt;words.length-2; j++){
+//				String[] key = {words[j], words[j+1]};
+//				if(endOfSentence){
+//					lineStarters.add(key);
+//					endOfSentence = false;
+//				}
+//				//check if at end of sentence 
+//				if(words[j].isEmpty());
+//				else if(words[j].charAt(words[j].length()-1)=='?'||words[j].charAt(words[j].length()-1)=='.'||words[j].charAt(words[j].length()-1)=='!'){
+//					endOfSentence = true;
+//					words[j]=words[j].substring(0, words[j].length()-1);
+//				}
+//				//add words to map
+//				ArrayList&lt;String&gt; temp;
+//				if(containsKey(key)) {
+//					temp = getKey(key);
+//				}
+//				else temp = new ArrayList&lt;String&gt;();
+//				temp.add(words[j+2]); //problem
+//				wordMap.put(key, temp);
+//
+//			}
+//		}
+		PrintWriter pw;
+		try {
+<span class="nc" id="L119">			pw = new PrintWriter(new File(&quot;map.txt&quot;));</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">			for(Map.Entry&lt;String[], ArrayList&lt;String&gt;&gt; e : wordMap.entrySet()){</span>
+<span class="nc" id="L121">				System.out.println(&quot;K: &quot; + Arrays.toString(e.getKey()) + &quot;     V: &quot; + e.getValue());</span>
+<span class="nc" id="L122">				pw.write(&quot;K: &quot; + Arrays.toString(e.getKey()) + &quot;     V: &quot; + e.getValue());</span>
+				
+<span class="nc" id="L124">			}</span>
+<span class="nc" id="L125">			pw.close();</span>
+<span class="nc" id="L126">		} catch (FileNotFoundException e1) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L128">			e1.printStackTrace();</span>
+<span class="nc" id="L129">		}</span>
+		
+		
+<span class="nc" id="L132">	}</span>
+	private static boolean underLimit(ArrayList&lt;String&gt; arr, int limit){
+<span class="nc bnc" id="L134" title="All 2 branches missed.">		return (String.join(&quot; &quot;, arr).length()&lt;limit);</span>
+	}
+	private static boolean checkKeys(String[] k0, String[]k1){
+<span class="nc bnc" id="L137" title="All 2 branches missed.">		if(k0.length!=k1.length) return false;</span>
+<span class="nc" id="L138">		boolean flag = true;</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">		for(int i =0; i&lt;k0.length; i++){</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">			if(!k0[i].equals(k1[i])) flag = false;</span>
+		}
+<span class="nc" id="L142">		return flag;</span>
+	}
+	private static boolean containsKey(String[] key){
+<span class="nc bnc" id="L145" title="All 2 branches missed.">		for(Map.Entry&lt;String[], ArrayList&lt;String&gt;&gt; e : wordMap.entrySet()){</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">			if(checkKeys(e.getKey(), key)) return true;</span>
+<span class="nc" id="L147">		}</span>
+<span class="nc" id="L148">		return false;</span>
+	}
+	
+	//returns value from key
+	private static ArrayList&lt;String&gt; getKey(String[] key){
+<span class="nc bnc" id="L153" title="All 2 branches missed.">		for(Map.Entry&lt;String[], ArrayList&lt;String&gt;&gt; e : wordMap.entrySet()){</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">			if(checkKeys(e.getKey(), key)) return e.getValue();</span>
+<span class="nc" id="L155">		}</span>
+<span class="nc" id="L156">		return null;</span>
+	}
+	private static ArrayList&lt;String&gt; generateMessage(int limit){
+		//random starting point
+<span class="nc" id="L160">		Random r = new Random();</span>
+<span class="nc" id="L161">		int index = r.nextInt(lineStarters.size());</span>
+<span class="nc" id="L162">		ArrayList&lt;String&gt; poem = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L163">		String first = lineStarters.get(index)[0];</span>
+<span class="nc" id="L164">		String second = lineStarters.get(index)[1];</span>
+<span class="nc" id="L165">		poem.add(first);</span>
+<span class="nc" id="L166">		poem.add(second);</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">		while(underLimit(poem, limit)){</span>
+<span class="nc" id="L168">			int endIndex = poem.size();</span>
+<span class="nc" id="L169">			String[] lastWords = {poem.get(endIndex-2), poem.get(endIndex-1)};</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">			if(containsKey(lastWords)){</span>
+<span class="nc" id="L171">				ArrayList&lt;String&gt; possibleNextWords = getKey(lastWords);</span>
+<span class="nc" id="L172">				int nextIndex = r.nextInt(possibleNextWords.size());</span>
+<span class="nc" id="L173">				String nextWord = possibleNextWords.get(nextIndex);</span>
+<span class="nc" id="L174">				poem.add(nextWord);</span>
+<span class="nc" id="L175">			}</span>
+<span class="nc" id="L176">			else return poem;</span>
+<span class="nc" id="L177">		}</span>
+		//make sure not over limit
+<span class="nc bnc" id="L179" title="All 2 branches missed.">		if(!underLimit(poem, limit)) return poem;</span>
+<span class="nc" id="L180">		return null;</span>
+	}
+	public String nextMessage(int limit){
+<span class="nc" id="L183">		String finalTweet = &quot;&quot;;</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">		for(String s: generateMessage(limit)) finalTweet += s+&quot; &quot;;</span>
+<span class="nc" id="L185">		return finalTweet.substring(0, finalTweet.length()-1);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

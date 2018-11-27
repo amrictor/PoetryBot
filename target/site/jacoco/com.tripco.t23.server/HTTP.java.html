@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HTTP.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PoBot</a> &gt; <a href="index.source.html" class="el_package">com.tripco.t23.server</a> &gt; <span class="el_source">HTTP.java</span></div><h1>HTTP.java</h1><pre class="source lang-java linenums">package com.tripco.t23.server;
+
+import spark.Request;
+
+/**  Special type of class that you don't instantiate - forgot what it is called.
+ * abstract or static? if you want to avoid instantiation entirely we could give it a private constructor
+ */
+
+
+<span class="nc" id="L10">public class HTTP {</span>
+
+  /** Creates a text Json containing the request information.
+   *
+   * @param request
+   * @return
+   */
+  public static String echoRequest(Request request) {
+
+<span class="nc" id="L19">    return &quot;{\n&quot;</span>
+<span class="nc" id="L20">        + &quot;\&quot;attributes\&quot;:\&quot;&quot; + request.attributes() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L21">        + &quot;\&quot;body\&quot;:\&quot;&quot; + request.body() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L22">        + &quot;\&quot;contentLength\&quot;:\&quot;&quot; + request.contentLength() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L23">        + &quot;\&quot;contentType\&quot;:\&quot;&quot; + request.contentType() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L24">        + &quot;\&quot;contextPath\&quot;:\&quot;&quot; + request.contextPath() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L25">        + &quot;\&quot;cookies\&quot;:\&quot;&quot; + request.cookies() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L26">        + &quot;\&quot;headers\&quot;:\&quot;&quot; + request.headers() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L27">        + &quot;\&quot;host\&quot;:\&quot;&quot; + request.host() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L28">        + &quot;\&quot;ip\&quot;:\&quot;&quot; + request.ip() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L29">        + &quot;\&quot;params\&quot;:\&quot;&quot; + request.params() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L30">        + &quot;\&quot;pathInfo\&quot;:\&quot;&quot; + request.pathInfo() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L31">        + &quot;\&quot;port\&quot;:\&quot;&quot; + request.port() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L32">        + &quot;\&quot;protocol\&quot;:\&quot;&quot; + request.protocol() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L33">        + &quot;\&quot;queryParams\&quot;:\&quot;&quot; + request.queryParams() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L34">        + &quot;\&quot;requestMethod\&quot;:\&quot;&quot; + request.requestMethod() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L35">        + &quot;\&quot;scheme\&quot;:\&quot;&quot; + request.scheme() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L36">        + &quot;\&quot;servletPath\&quot;:\&quot;&quot; + request.servletPath() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L37">        + &quot;\&quot;session\&quot;:\&quot;&quot; + request.session() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L38">        + &quot;\&quot;uri()\&quot;:\&quot;&quot; + request.uri() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L39">        + &quot;\&quot;url()\&quot;:\&quot;&quot; + request.url() + &quot;\&quot;,\n&quot;</span>
+<span class="nc" id="L40">        + &quot;\&quot;userAgent\&quot;:\&quot;&quot; + request.userAgent() + &quot;\&quot;\n&quot;</span>
+        + &quot;}\n&quot;;
+
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
