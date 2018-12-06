@@ -93,9 +93,7 @@ class Application extends Component {
                             Designer Statement
                         </NavLink>
                     </NavItem>
-                        &nbsp;
-                        <a href={"https://github.com/amrictor/PoetryBot"}><img src={"https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png"} height={'32'}/></a>
-                </Row>
+                    </Row>
                 </Nav>
 
                 <TabContent activeTab={this.state.activeTab}>
@@ -104,6 +102,7 @@ class Application extends Component {
                         <Button color="primary" onClick={this.writePoem} style={{ marginBottom: '1rem' }}>Write me a poem!</Button>
                         <Collapse isOpen={this.state.collapse}>
                             {this.formatPoem()}
+                            <br/><br/>
                         </Collapse>
                     </TabPane>
                         <TabPane tabId="2">

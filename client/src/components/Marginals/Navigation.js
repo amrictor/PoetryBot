@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {CardTitle, Collapse, Navbar, NavbarBrand, Nav, NavItem, NavLink as ReactNavLink, Button} from 'reactstrap';
+import { Row, Col, CardTitle, Collapse, Navbar, NavbarBrand, Nav, NavItem, NavLink as ReactNavLink, Button} from 'reactstrap';
 import { NavLink } from 'react-router-dom'
 import './css/navbar.css';
 
@@ -75,7 +75,14 @@ class Navigation extends Component {
 
       <div className="application-width">
         <br/>
+        <Row>
+          <Col>
         <CardTitle><b>PoBot</b> by Abigail Rictor</CardTitle>
+          </Col>
+          <Col>
+            <a href={"https://github.com/amrictor/PoetryBot"} className={'float-right'} target="_blank"><img src={"https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png"} height={'32'}/></a>
+          </Col>
+        </Row>
         <hr/>
       </div>
     )
