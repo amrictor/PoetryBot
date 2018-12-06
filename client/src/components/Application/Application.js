@@ -1,43 +1,7 @@
 import React, {Component} from 'react';
-import {Container, Collapse, Button} from 'reactstrap';
-import {get_poem} from '../../api/api';
-
-import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 import classnames from 'classnames';
-// constructor(props) {
-//     super(props);
-//     this.state = {
-//         trip: {
-//             type: "trip",
-//             version: 4,
-//             title: "My Trip",
-//             options: {
-//                 units: "miles",
-//                 unitName: "",
-//                 unitRadius: 0,
-//                 optimization: "none",
-//                 map: "svg"
-//             },
-//             places: [],
-//             distances: [],
-//             map: null
-//         },
-//         poem: {
-//             author: "",
-//             classification: "",
-//             keywords: "",
-//             period: "",
-//             reference: "",
-//             region: "",
-//             text: "",
-//             title: "",
-//             year: ""
-//         },
-//         collapse: false
-//     };
-//     this.toggle = this.toggle.bind(this);
-//     this.writePoem = this.writePoem.bind(this);
-// }
+import {Container, Collapse, Button, TabContent, TabPane, Nav, NavItem, NavLink, CardTitle, CardText, Row} from 'reactstrap';
+import {get_poem} from '../../api/api';
 
 
 
@@ -56,19 +20,27 @@ class Application extends Component {
                 reference: "",
                 region: "",
                 text: "",
+                poem: "",
                 title: "",
                 year: ""
             },
-            
+            activeTab: '1',
             collapse: false
         };
         this.toggle = this.toggle.bind(this);
         this.writePoem = this.writePoem.bind(this);
-        this.formatPoem = this.formatPoem.bind(this);
+        // this.formatPoem = this.formatPoem.bind(this);
     }
 
     toggle() {
         this.setState({ collapse: !this.state.collapse });
+    }
+    toggleTab(tab) {
+        if (this.state.activeTab !== tab) {
+            this.setState({
+                activeTab: tab
+            });
+        }
     }
 
     writePoem() {
@@ -86,7 +58,7 @@ class Application extends Component {
         let data = [];
         for(let i = 0; i<this.state.poem.text.length; i++) {
             data.push(
-                <React.Fragment>
+                <React.Fragment key={i}>
                     {this.state.poem.text[i]}
                     <br/>
                 </React.Fragment>
@@ -98,13 +70,51 @@ class Application extends Component {
 
     render() {
         return (
+
             <Container>
-                <Button color="primary" onClick={this.writePoem} style={{ marginBottom: '1rem' }}>Write me a poem!</Button>
-                <Collapse isOpen={this.state.collapse}>
-                    {this.formatPoem()}
+
+                <Nav tabs>
+                    <Row>
+                    <NavItem>
+                        <NavLink
+                            style={{'cursor': 'pointer'}}
+                            className={classnames({ active: this.state.activeTab === '1' })}
+                            onClick={() => { this.toggleTab('1'); }}
+                        >
+                            PoBot
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            style={{'cursor': 'pointer'}}
+                            className={classnames({ active: this.state.activeTab === '2' })}
+                            onClick={() => { this.toggleTab('2'); }}
+                        >
+                            Designer Statement
+                        </NavLink>
+                    </NavItem>
+                        &nbsp;
+                        <a href={"https://github.com/amrictor/PoetryBot"}><img src={"https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png"} height={'32'}/></a>
+                </Row>
+                </Nav>
+
+                <TabContent activeTab={this.state.activeTab}>
+                    <TabPane tabId="1">
+                        <br/>
+                        <Button color="primary" onClick={this.writePoem} style={{ marginBottom: '1rem' }}>Write me a poem!</Button>
+                        <Collapse isOpen={this.state.collapse}>
+                            {this.formatPoem()}
+                        </Collapse>
+                    </TabPane>
+                        <TabPane tabId="2">
+                            <br/>
+                            <CardTitle>Special Title Treatment</CardTitle>
+                            <CardText>With supporting text below as a natural lead-in to additional content.</CardText>
+
+                        </TabPane>
+                </TabContent>
 
 
-                </Collapse>
             </Container>
         )
     }
