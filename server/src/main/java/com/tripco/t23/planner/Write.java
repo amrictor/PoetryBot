@@ -14,6 +14,7 @@ public class Write {
     /** Handles poem generation request, creating a new poem object from the poem request.
      * Does the conversion from Json to a Java class before planning the trip.
      * @param request
+     * @param b
      */
     public Write (Request request, Bot b) {
         // first print the request
@@ -26,16 +27,13 @@ public class Write {
         // convert the body of the request to a Java class.
         Gson gson = new Gson();
         poem = new Poem();
-
+        String text = b.writePoem();
 
         try {
             // plan the trip.
             Random r = new Random();
-            poem.text = new String[r.nextInt(30)+5];
-            for(int i = 0; i<poem.text.length; i++) {
-                poem.text[i] = b.nextMessage(r.nextInt(400)+50);
-                System.out.println(poem.text[i]);
-            }
+            poem.text = text.split("\n");
+            poem.poem = text;
             poem.title = poem.text[0].substring(0, poem.text[0].indexOf(' '));
             poem.author = "Po Bot";
             poem.year = "2018";

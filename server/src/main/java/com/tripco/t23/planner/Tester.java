@@ -1,4 +1,5 @@
 package com.tripco.t23.planner;
+import java.util.Arrays;
 import java.util.Random;
 
 // PoetryBot Assignment
@@ -15,13 +16,10 @@ public class Tester {
 				+ "*******************************************************************************************************************************************\n"
 				+ "*******************************************************************************************************************************************\n");
 		Random r = new Random();
-		String[] poem = new String[r.nextInt(30)+5];
-		for(int i = 0; i<poem.length; i++) {
-			poem[i] = b.nextMessage(r.nextInt(400)+50);
-			System.out.println(poem[i]);
-		}
-			
-		
+
+		String poem = b.writePoem();
+		String[] lines = poem.split("\n");
+		System.out.println(Arrays.toString(lines));
 	}
 
 }

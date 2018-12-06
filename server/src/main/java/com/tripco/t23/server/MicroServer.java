@@ -68,7 +68,6 @@ public class MicroServer {
    * @return returns trip object
    */
   private String write(Request request, Response response) {
-    System.out.println("HEYO");
     response.type("application/json");
     response.header("Access-Control-Allow-Origin", "*");
 
